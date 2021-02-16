@@ -1,15 +1,10 @@
 #! /usr/bin/env node
 
-console.log('This script populates some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0.a9azn.mongodb.net/local_library?retryWrites=true');
+console.log('This script populates some test books, authors, genres and bookinstances to your database.');
 
-// Get arguments passed on command line
-var userArgs = process.argv.slice(2);
-/*
-if (!userArgs[0].startsWith('mongodb')) {
-    console.log('ERROR: You need to specify a valid mongodb URL as the first argument');
-    return
-}
-*/
+var dbCredentials = require('./dbCredentials.js');
+
+
 var async = require('async')
 var Book = require('./models/book')
 var Author = require('./models/author')
@@ -18,7 +13,7 @@ var BookInstance = require('./models/bookinstance')
 
 
 var mongoose = require('mongoose');
-var mongoDB = userArgs[0];
+var mongoDB = dbCredentials.connection_string;
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise;
 var db = mongoose.connection;
@@ -104,7 +99,6 @@ function bookInstanceCreate(book, imprint, due_back, status, cb) {
   }  );
 }
 
-
 function createGenreAuthors(cb) {
     async.series([
         function(callback) {
@@ -135,7 +129,6 @@ function createGenreAuthors(cb) {
         // optional callback
         cb);
 }
-
 
 function createBooks(cb) {
     async.parallel([
@@ -207,8 +200,16 @@ function createBookInstances(cb) {
 }
 
 
+//clears all existing data
+function clearAllExistingRecords(callback) {
+  mongoose.connection.dropDatabase();
+  callback(null, 1);
+}
 
+
+//generate new data with asynchronous calls.
 async.series([
+    clearAllExistingRecords,
     createGenreAuthors,
     createBooks,
     createBookInstances
@@ -220,7 +221,6 @@ function(err, results) {
     }
     else {
         console.log('BOOKInstances: '+bookinstances);
-        
     }
     // All done, disconnect from database
     mongoose.connection.close();

@@ -13,10 +13,11 @@ var helmet = require('helmet');
 
 var app = express();
 
+var dbCredentials = require('./dbCredentials.js');
 
 // Set up mongoose connection
 var mongoose = require('mongoose');
-var dev_db_url = 'mongodb+srv://cooluser:coolpassword@cluster0.a9azn.mongodb.net/local_library?retryWrites=true';
+var dev_db_url = dbCredentials.connection_string;
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise;
