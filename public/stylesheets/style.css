@@ -12,3 +12,7 @@ form {
 main {
     margin-top: 1em;
 }
+
+a, a:visited {
+    color: #3740ff;
+}
