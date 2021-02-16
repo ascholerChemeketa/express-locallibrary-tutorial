@@ -33,8 +33,7 @@ exports.index = function(req, res) {
 
 // Display list of all books.
 exports.book_list = function(req, res, next) {
-
-  Book.find({}, 'title author')
+  Book.find({}, 'title author').sort('title')
     .populate('author').exec(function (err, list_books) {
       if (err) {return next(err)} 
       else {
@@ -80,13 +79,14 @@ exports.book_create_get = function(req, res, next) {
     // Get all authors and genres, which we can use for adding to our book.
     async.parallel({
         authors: function(callback) {
-            Author.find(callback);
+            Author.find().sort('family_name').exec(callback);
         },
         genres: function(callback) {
-            Genre.find(callback);
+            Genre.find().sort('name').exec(callback);
         },
     }, function(err, results) {
         if (err) { return next(err); }
+        
         res.render('book_form', { title: 'Create Book',authors:results.authors, genres:results.genres });
     });
 
