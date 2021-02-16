@@ -1,7 +1,16 @@
 # express-locallibrary-tutorial
-Tutorial "Local Library" website written in in Node/Express.
+Tutorial "Local Library" website written in in Node/Express, updated for use in CS290 at Chemeketa
+Community College.
 
 ----
+
+## Modifications
+
+The primary change to the source version is to implement views using EJS instead of pug.
+
+----
+
+## Information about original source
 
 This web application creates an online catalog for a small local library, where users can browse available books and manage their accounts.
 
